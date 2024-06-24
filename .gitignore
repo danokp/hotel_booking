@@ -1,0 +1,8 @@
+poetry.lock
+.venv/
+dist/
+__pycache__//
+*.pyc
+.idea/
+.env
+.coverage
