@@ -1,4 +1,4 @@
-from sqladmin.authentication import AuthenticationBackend
+from sqladmin.authentication import AuthenticationBackend, RedirectResponse
 from starlette.requests import Request
 
 from app.users.auth import authenticate_user, create_access_token

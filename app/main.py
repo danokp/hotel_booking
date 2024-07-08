@@ -10,6 +10,7 @@ from fastapi_cache.backends.redis import RedisBackend
 from fastapi_versioning import VersionedFastAPI
 from redis import asyncio as aioredis
 from sqladmin import Admin
+from prometheus_fastapi_instrumentator import Instrumentator
 
 from app.admin.auth import authentication_backend
 from app.admin.views import BookingsAdmin, HotelsAdmin, RoomsAdmin, UsersAdmin
@@ -49,10 +50,6 @@ app = VersionedFastAPI(
     app,
     version_format="{major}",
     prefix_format="/v{major}",
-    # description='Greet users with a nice message',
-    # middleware=[
-    #     Middleware(SessionMiddleware, secret_key='mysecretkey')
-    # ]
 )
 
 app.mount("/static", StaticFiles(directory="app/static"), "static")
@@ -73,6 +70,13 @@ app.add_middleware(
         "Authorization",
     ],
 )
+
+
+instrumentator = Instrumentator(
+    should_group_status_codes=False,
+    excluded_handlers=[".*admin.*", "/metrics"],
+)
+instrumentator.instrument(app).expose(app)
 
 
 admin = Admin(app, engine, authentication_backend=authentication_backend)
